@@ -1,8 +1,9 @@
 import os
 import streamlit as st
-import cv2
+from PIL import Image
+from streamlit_drawable_canvas import st_canvas
 
-st.set_page_config(page_title="Annotation App", page_icon=":pencil2:", layout="wide", initial_sidebar_state="auto")
+st.set_page_config(page_title="Annotation App", page_icon=":pencil2:", layout="wide", initial_sidebar_state="expanded")
 
 def display_image_names():
     filelist=[]
@@ -53,9 +54,19 @@ def display_home():
     st.markdown("<h1 style='text-align: center; color: black;'>Annotation App</h1>", unsafe_allow_html=True)
     if "active_image" not in st.session_state:
         st.session_state["active_image"] = ""
+        
     if st.session_state["active_image"] != "":
-        st.image("data/images/"+st.session_state["active_image"] + '.jpg', use_column_width=True)
+        #st.image("data/images/"+st.session_state["active_image"] + '.jpg', use_column_width=True)
+        img = Image.open("data/images/"+st.session_state["active_image"] + ".jpg")
+        #st.image(img, use_column_width=True)
+        img_size = img.size
+        st.write(st.session_state.active_image)
+        canvas = st_canvas(width=img_size[0]*0.7, height=img_size[1]*0.5,
+                            background_image=img,
+                            stroke_width=3, stroke_color= "#b6d130",
+                            drawing_mode = "polygon", fill_color = "#00000000")
 
+        st.write(canvas.json_data)
     display_utils()
     #st.session_state["active_image"] = ""
     display_image_names()
